@@ -23,18 +23,18 @@ const Weather = () => {
       }
     };
     fetchData();
-  }, [city, country]);
+  }, [city, country]); // make a new call each time city or country changes
 
   return (
     <div>
       <Input
-        label="City"
+        label="City: "
         name="city"
         value={city}
         onChange={(e) => setCity(e.target.value)}
       />
       <Input
-        label="Country"
+        label="Country: "
         name="country"
         value={country}
         onChange={(e) => setCountry(e.target.value)}
