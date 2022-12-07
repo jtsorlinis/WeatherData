@@ -27,10 +27,33 @@ app.get("/api/countries", async (req, res) => {
   res.json(countries);
 });
 
-app.get("/api/cities/:countryCode", async (req, res) => {
+app.get("/api/cities/:countryCode/:searchVal", async (req, res) => {
   const country = req.params.countryCode;
-  const filteredCities = cities.filter((city) => city.country === country);
-  res.json(filteredCities);
+  const searchVal = req.params.searchVal;
+
+  // Filter by country and search input
+  let filteredCities = cities.filter(
+    (city) =>
+      city.country === country &&
+      city.name.toLowerCase().includes(searchVal.toLowerCase())
+  );
+
+  // Convert to label/value pairs
+  filteredCities = filteredCities.map((city) => {
+    return {
+      label: city.name,
+      value: city.name,
+    };
+  });
+
+  // Remove duplicates if any
+  filteredCities = [...new Set(filteredCities)];
+
+  // Sort alphabetically
+  filteredCities.sort((a, b) => (a.name > b.name ? 1 : -1));
+
+  // Only return first 100 rows for performance
+  res.json(filteredCities.slice(0, 100));
 });
 
 app.get("/api/weather", async (req, res) => {

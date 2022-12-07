@@ -1,18 +1,67 @@
 import { useEffect, useState } from "react";
-import Input from "./Input";
+import AsyncSelect from "react-select/async";
+import Select from "react-select";
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
 
 const Weather = () => {
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
+  const [countries, setCountries] = useState([]);
+  const [city, setCity] = useState<SelectOption | null>();
+  const [country, setCountry] = useState<SelectOption | null>();
   const [weatherDesc, setWeatherDesc] = useState("");
 
+  // Load country list on page load
   useEffect(() => {
-    // Get weather description from API
+    const fetchCountries = async () => {
+      try {
+        // Make the API call
+        const response = await fetch("http://localhost:3001/api/countries");
+        // Convert the result to json
+        const results = await response.json();
+        // Update the state
+        setCountries(results);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  // Load filtered cities based on search
+  const loadCities: any = (inputValue: string) => {
+    // Do nothing if no country selected
+    if (!country) {
+      return [];
+    }
+
+    return fetch(
+      `http://localhost:3001/api/cities/${country.value}/${inputValue}`
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        return result;
+      });
+  };
+
+  // Clear city when country changes
+  useEffect(() => {
+    setCity(null);
+  }, [country]);
+
+  // Get weather description from API
+  useEffect(() => {
+    if (!country || !city) {
+      return;
+    }
+    console.log("here");
     const fetchData = async () => {
       try {
         // Make the API call
         const response = await fetch(
-          `http://localhost:3001/api/weather?city=${city}&country=${country}`
+          `http://localhost:3001/api/weather?city=${city.value}&country=${country.value}`
         );
         // Convert the result to plain text as it's just a description
         const description = await response.text();
@@ -23,21 +72,28 @@ const Weather = () => {
       }
     };
     fetchData();
-  }, [city, country]); // make a new call each time city or country changes
+  }, [city]); // make a new call each time city changes
 
   return (
     <div>
-      <Input
-        label="City: "
-        name="city"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-      />
-      <Input
-        label="Country: "
-        name="country"
+      <Select
+        isLoading={countries.length === 0}
         value={country}
-        onChange={(e) => setCountry(e.target.value)}
+        onChange={(option) => setCountry(option)}
+        className="inputField"
+        placeholder="Select a country..."
+        options={countries}
+      />
+      <br />
+      <AsyncSelect
+        isDisabled={!country}
+        value={city}
+        onChange={(option) => setCity(option)}
+        className="inputField"
+        placeholder={
+          !country ? "Select a country first" : "Start typing to see options..."
+        }
+        loadOptions={loadCities} // Should be debounced
       />
       <h3>{weatherDesc}</h3>
     </div>
