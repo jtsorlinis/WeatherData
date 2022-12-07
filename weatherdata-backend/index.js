@@ -2,14 +2,15 @@ import * as dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import { cities, countries } from "./utils/generateCitiesAndCountries.js";
 
 dotenv.config();
 
 const app = express();
 const port = 3001;
-const apiKey = process.env.APIKEY; // Store API key in gitignored environment variable
+const apiKey = process.env.APIKEY; // Store API key in gitignored .env file
 
-// Add cors to prevent cors issues locally
+// Add cors middleware to prevent cors issues locally
 app.use(cors());
 
 const limiter = rateLimit({
@@ -21,6 +22,16 @@ const limiter = rateLimit({
 
 // Apply the rate limiting middleware to all requests
 app.use(limiter);
+
+app.get("/api/countries", async (req, res) => {
+  res.json(countries);
+});
+
+app.get("/api/cities/:countryCode", async (req, res) => {
+  const country = req.params.countryCode;
+  const filteredCities = cities.filter((city) => city.country === country);
+  res.json(filteredCities);
+});
 
 app.get("/api/weather", async (req, res) => {
   try {
