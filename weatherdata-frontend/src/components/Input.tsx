@@ -15,6 +15,7 @@ const Input: React.FC<InputProps> = ({ label, name, value, onChange }) => (
       id={name}
       name={name}
       value={value}
+      maxLength={50}
       onChange={onChange} // should ideally be debounced
     />
   </div>
