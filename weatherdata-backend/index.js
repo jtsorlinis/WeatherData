@@ -19,7 +19,7 @@ app.get("/api/weather", async (req, res) => {
 
     // Return error if city not found
     if (!response.ok) {
-      res.status(404).send("Please enter a valid city/country combination");
+      res.send("Please enter a valid city/country combination");
       return;
     }
 
