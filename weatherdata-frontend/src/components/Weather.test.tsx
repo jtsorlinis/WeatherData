@@ -1,24 +1,33 @@
-import { render, fireEvent, screen, waitFor } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 import Weather from "./Weather";
 
-describe("Weather", () => {
-  it("make sure the component is re-rendered when an API call is made", async () => {
-    // Mock the fetch API call
-    vi.spyOn(global, "fetch").mockImplementation(
-      () =>
-        new Promise<Response>((resolve) =>
-          resolve({
-            text: () => Promise.resolve("Clear sky"),
-          })
-        )
-    );
+const fakeCountries = [
+  { label: "country1", value: "AA" },
+  { label: "country2", value: "BB" },
+  { label: "country3", value: "CC" },
+];
 
-    render(<Weather />);
+const fakeCities = [
+  { label: "city1", value: "city1" },
+  { label: "city2", value: "city2" },
+  { label: "city3", value: "city3" },
+];
 
-    // Wait for the weather description to be rendered
-    await waitFor(() => {
-      expect(screen.getByText("Clear sky")).toBeInTheDocument();
-    });
+describe("Weather component", () => {
+  let wrapper: any;
+
+  beforeEach(() => {
+    wrapper = render(<Weather />);
   });
+
+  it("should render without crashing", async () => {
+    expect(wrapper.getByText("Select a country...")).toBeInTheDocument();
+  });
+
+  // Currently an issue where unable to test multiple react-selects on the page so can't write tests
+  // https://github.com/romgain/react-select-event/issues/109
+  it("should enable the city select when a country is selected", async () => {});
+
+  it("should clear the city value when country is changed", async () => {});
 });
