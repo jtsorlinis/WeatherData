@@ -27,7 +27,18 @@ describe("Weather component", () => {
 
   // Currently an issue where unable to test multiple react-selects on the page so can't write tests
   // https://github.com/romgain/react-select-event/issues/109
-  it("should enable the city select when a country is selected", async () => {});
+  it("should enable the city select when a country is selected", async () => {
+    // Select country1
+    // Expect country1 to be in document
+    // Expect "Start typing to see options..." to be in document
+  });
 
-  it("should clear the city value when country is changed", async () => {});
+  it("should clear the city value when country is changed", async () => {
+    // Select country1
+    // Select city1
+    // Expect city1 to be in document
+    // Select country2
+    // Exepect city1 to not be in document
+    // Expect "Start typing to see options..." to be in document
+  });
 });
