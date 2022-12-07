@@ -1,9 +1,14 @@
 import * as dotenv from "dotenv";
-dotenv.config();
 import express from "express";
+import cors from "cors";
+
+dotenv.config();
+
 const app = express();
 const port = 3001;
 const apiKey = process.env.APIKEY;
+
+app.use(cors());
 
 app.get("/api/weather", async (req, res) => {
   try {
@@ -14,11 +19,12 @@ app.get("/api/weather", async (req, res) => {
 
     // Return error if city not found
     if (!response.ok) {
-      res.status(data.cod).send(data.message);
+      res.status(404).send("Please enter a valid city/country combination");
       return;
     }
 
-    res.send(data);
+    // Only send back description
+    res.send(data.weather[0].description);
   } catch (e) {
     res.status(400).send(e);
   }
