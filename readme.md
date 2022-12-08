@@ -10,6 +10,10 @@
 ## Backend (Express)
 
 - Navigate to backend folder
+- Create a `.env` file with API Key
+ ```
+ APIKEY=XXXXXX
+ ```
 - Run `npm i` to install dependencies
 - Run `npm start` to run a local dev server
 
